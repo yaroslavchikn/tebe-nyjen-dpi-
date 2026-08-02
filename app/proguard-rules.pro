@@ -1,0 +1,6 @@
+-keep class com.yourcompany.wifiunblocker.VpnService
+-keep class com.yourcompany.wifiunblocker.ForegroundService
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory
+-keep class kotlinx.coroutines.android.AndroidDispatcherFactory
+-keepattributes *Annotation*, InnerClasses
+-dontnote kotlinx.coroutines.internal.MainDispatcherFactory
