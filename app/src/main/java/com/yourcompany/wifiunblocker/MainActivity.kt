@@ -3,20 +3,16 @@ package com.yourcompany.wifiunblocker
 import android.content.Intent
 import android.net.VpnService
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.animation.doOnEnd
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.*
-import android.animation.Animator
-import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
-import android.view.animation.AnimationUtils
-import android.view.animation.OvershootInterpolator
 import android.view.animation.CycleInterpolator
 import android.widget.Toast
 
@@ -50,9 +46,9 @@ class MainActivity : AppCompatActivity() {
 
         chipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
             val mode = when {
-                checkedIds.contains(chipFragment.id) -> VpnService.MODE_FRAGMENT
-                checkedIds.contains(chipTtl.id) -> VpnService.MODE_TTL
-                else -> VpnService.MODE_HYBRID
+                checkedIds.contains(chipFragment.id) -> 1
+                checkedIds.contains(chipTtl.id) -> 2
+                else -> 3
             }
             VpnService.currentMode = mode
             if (isVpnRunning) {
@@ -130,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             playTogether(scaleX, scaleY, alpha)
             duration = 1200
             interpolator = CycleInterpolator(0.5f)
-            repeatCount = Animator.INFINITE
+            repeatCount = ObjectAnimator.INFINITE
             start()
         }
     }
