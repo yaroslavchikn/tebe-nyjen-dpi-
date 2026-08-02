@@ -11,7 +11,6 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.*
-import android.animation.Animator
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.view.animation.CycleInterpolator
@@ -127,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             playTogether(scaleX, scaleY, alpha)
             duration = 1200
             interpolator = CycleInterpolator(0.5f)
-            repeatCount = Animator.INFINITE
+            repeatCount = ObjectAnimator.INFINITE
             start()
         }
     }
