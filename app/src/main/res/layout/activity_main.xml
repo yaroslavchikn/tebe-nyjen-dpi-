@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:padding="24dp"
+    android:background="@drawable/bg_gradient">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="40dp"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.05"
+        android:elevation="4dp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center">
+
+        <View
+            android:id="@+id/statusIndicator"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:background="@drawable/circle_indicator_off"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/status_disconnected"
+            android:textColor="#E0E0E0"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/actionCard"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginTop="32dp"
+        app:cardCornerRadius="80dp"
+        app:cardElevation="12dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless"
+        app:strokeColor="@color/white"
+        app:strokeWidth="2dp">
+
+        <ImageView
+            android:id="@+id/actionButton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_power_off"
+            android:scaleType="center"
+            android:padding="40dp"
+            android:background="@drawable/btn_ripple" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dpi_mode_label"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="8dp" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/modeChipGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:singleSelection="true"
+        app:selectionRequired="true"
+        android:gravity="center">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipFragment"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dpi_mode_fragment"
+            android:checked="false" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipTtl"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dpi_mode_ttl"
+            android:checked="false" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chipHybrid"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dpi_mode_hybrid"
+            android:checked="true" />
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        android:backgroundTint="#33FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Обход DPI через фрагментацию и TTL\nРаботает на Wi-Fi без root"
+            android:textColor="#FFFFFF"
+            android:textAlignment="center"
+            android:padding="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-light" />
+    </com.google.android.material.card.MaterialCardView>
+
+</LinearLayout>
