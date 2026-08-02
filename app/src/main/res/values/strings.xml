@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">WiFi Unblocker</string>
+    <string name="main_button_start">Запустить обход</string>
+    <string name="main_button_stop">Остановить</string>
+    <string name="status_connected">Подключено — защита активна</string>
+    <string name="status_disconnected">Отключено</string>
+    <string name="notification_channel_name">WiFi Unblocker VPN</string>
+    <string name="notification_channel_desc">Статус работы обхода DPI</string>
+    <string name="dpi_mode_label">Режим обхода DPI:</string>
+    <string name="dpi_mode_fragment">Фрагментация ClientHello</string>
+    <string name="dpi_mode_ttl">Изменение TTL</string>
+    <string name="dpi_mode_hybrid">Гибридный (fragment+TTL)</string>
+    <string name="toast_started">VPN запущен. Пакеты обрабатываются.</string>
+    <string name="toast_stopped">VPN остановлен.</string>
+</resources>
