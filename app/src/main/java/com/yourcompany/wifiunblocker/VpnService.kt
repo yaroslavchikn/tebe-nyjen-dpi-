@@ -10,10 +10,6 @@ import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetAddress
 import java.net.InetSocketAddress
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.atomic.AtomicBoolean
 
 class VpnService : VpnService() {
     companion object {
@@ -24,17 +20,13 @@ class VpnService : VpnService() {
         private const val MTU = 1500
         private const val BUFFER_SIZE = MTU + 50
 
-        const val MODE_FRAGMENT = 1
-        const val MODE_TTL = 2
-        const val MODE_HYBRID = 3
-        var currentMode = MODE_HYBRID
+        var currentMode = 3 // 1 - fragment, 2 - TTL, 3 - hybrid
     }
 
     private var vpnInterface: ParcelFileDescriptor? = null
-    private val isRunning = AtomicBoolean(false)
+    private val isRunning = java.util.concurrent.atomic.AtomicBoolean(false)
     private var job: Job? = null
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-    private val connectionCache = ConcurrentHashMap<String, ByteArray>()
 
     override fun onStartCommand(intent: android.content.Intent?, flags: Int, startId: Int): Int {
         Log.d(TAG, "VPN Service started")
@@ -52,7 +44,7 @@ class VpnService : VpnService() {
 
         try {
             val builder = Builder()
-            builder.setAddress(VPN_ADDRESS, 32)
+            builder.addAddress(VPN_ADDRESS, 32)
             builder.addRoute(VPN_ROUTE, VPN_MASK)
             builder.setMtu(MTU)
             builder.setSession("WiFi Unblocker (DPI bypass)")
@@ -68,7 +60,7 @@ class VpnService : VpnService() {
                 processPackets()
             }
 
-            ForegroundService.startForegroundService(this, "Обход DPI активен (режим: ${if (currentMode == MODE_FRAGMENT) "фрагментация" else if (currentMode == MODE_TTL) "TTL" else "гибрид"})")
+            ForegroundService.startForegroundService(this, "Обход DPI активен (режим: ${if (currentMode == 1) "фрагментация" else if (currentMode == 2) "TTL" else "гибрид"})")
 
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start VPN", e)
@@ -82,7 +74,6 @@ class VpnService : VpnService() {
         job = null
         vpnInterface?.close()
         vpnInterface = null
-        connectionCache.clear()
         ForegroundService.stopForegroundService(this)
         Log.d(TAG, "VPN stopped")
     }
@@ -93,7 +84,6 @@ class VpnService : VpnService() {
         val outputStream = FileOutputStream(fd)
 
         val readBuffer = ByteArray(BUFFER_SIZE)
-        val writeBuffer = ByteArray(BUFFER_SIZE)
 
         val outgoingSocket = DatagramSocket()
         outgoingSocket.soTimeout = 0
@@ -174,8 +164,6 @@ class VpnService : VpnService() {
         if (protocol == 6) {
             val tcpHeaderOffset = ihl
             if (packet.size < tcpHeaderOffset + 20) return listOf(packet)
-            val srcPort = ((packet[tcpHeaderOffset].toInt() and 0xFF) shl 8) or (packet[tcpHeaderOffset + 1].toInt() and 0xFF)
-            val dstPort = ((packet[tcpHeaderOffset + 2].toInt() and 0xFF) shl 8) or (packet[tcpHeaderOffset + 3].toInt() and 0xFF)
             val dataOffset = ((packet[tcpHeaderOffset + 12].toInt() and 0xF0) shr 4) * 4
             val tcpDataStart = tcpHeaderOffset + dataOffset
 
@@ -183,17 +171,17 @@ class VpnService : VpnService() {
                 val payload = packet.sliceArray(tcpDataStart until packet.size)
                 if (payload.size >= 5 && payload[0] == 0x16.toByte() && payload[1] == 0x03.toByte()) {
                     when (currentMode) {
-                        MODE_FRAGMENT -> {
+                        1 -> {
                             val fragments = fragmentTlsClientHello(packet, tcpHeaderOffset, dataOffset, payload)
                             result.addAll(fragments)
                             return result
                         }
-                        MODE_TTL -> {
+                        2 -> {
                             val modifiedPacket = modifyTtl(packet)
                             result.add(modifiedPacket)
                             return result
                         }
-                        MODE_HYBRID -> {
+                        else -> {
                             val fragments = fragmentTlsClientHello(packet, tcpHeaderOffset, dataOffset, payload)
                             for (frag in fragments) {
                                 val withTtl = modifyTtl(frag)
@@ -207,7 +195,7 @@ class VpnService : VpnService() {
         }
 
         if (protocol == 17) {
-            if (currentMode == MODE_TTL || currentMode == MODE_HYBRID) {
+            if (currentMode == 2 || currentMode == 3) {
                 val modified = modifyTtl(packet)
                 result.add(modified)
                 return result
